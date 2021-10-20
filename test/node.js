@@ -2663,3 +2663,74 @@ t.test('children of the global root are considered tops', t => {
   t.equal(bar.top, foo)
   t.end()
 })
+
+t.test('overrides', (t) => {
+  t.test('skips loading when no overrides are provided', (t) => {
+    const tree = new Node({
+      loadOverrides: true,
+      path: '/some/path',
+      pkg: {
+        name: 'foo',
+      },
+    })
+    t.equal(tree.overrides, undefined, 'overrides is undefined')
+    t.end()
+  })
+
+  t.test('skips loading when overrides are empty', (t) => {
+    const tree = new Node({
+      loadOverrides: true,
+      path: '/some/path',
+      pkg: {
+        name: 'foo',
+        overrides: {},
+      },
+    })
+    t.equal(tree.overrides, undefined, 'overrides is undefined')
+    t.end()
+  })
+
+  t.test('loads overrides', (t) => {
+    const tree = new Node({
+      loadOverrides: true,
+      path: '/some/path',
+      pkg: {
+        name: 'foo',
+        dependencies: {
+          bar: '^1',
+        },
+        overrides: {
+          bar: { '.': '2.0.0' },
+        },
+      },
+    })
+    t.ok(tree.overrides, 'overrides is defined')
+    t.end()
+  })
+
+  t.test('overrides propagate to children and edges', (t) => {
+    const tree = new Node({
+      loadOverrides: true,
+      path: '/some/path',
+      pkg: {
+        name: 'foo',
+        dependencies: {
+          bar: '^1',
+        },
+        overrides: {
+          bar: { '.': '2.0.0' },
+        },
+      },
+      children: [
+        { pkg: { name: 'bar', version: '1.0.0' } },
+      ],
+    })
+
+    t.ok(tree.overrides, 'overrides is defined on root')
+    t.ok(tree.edgesOut.get('bar').overrides, 'overrides is defined on edgeOut')
+    t.ok(tree.children.get('bar').overrides, 'overrides is defined on child')
+    t.end()
+  })
+
+  t.end()
+})

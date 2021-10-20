@@ -7,7 +7,7 @@ t.test('constructor', async (t) => {
     const overrides = new OverrideSet({
       overrides: {
         'a@1': { '.': '1.0.2' },
-      }
+      },
     })
 
     t.ok(overrides.children.has('a@1'), 'created child')
