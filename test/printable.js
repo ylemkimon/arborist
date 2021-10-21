@@ -435,6 +435,6 @@ t.test('show overrides', (t) => {
     ...flags,
   })
 
-  t.matchSnapshot(printable(tree))
+  t.matchSnapshot(util.inspect(printable(tree), { depth: 5 }))
   t.end()
 })

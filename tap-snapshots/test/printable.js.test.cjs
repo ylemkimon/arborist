@@ -558,135 +558,31 @@ EdgeIn{
 
 exports[`test/printable.js TAP show overrides > must match snapshot 1`] = `
 {
-"children":Map{
-"bar" =>{
-"edgesIn":Set{
-EdgeIn{
-"from":"",
-"name":"bar",
-"overrides":&ref_2 OverrideSet{
-"children":Map{},
-"key":"bar",
-"keySpec":"",
-"name":"bar",
-"parent":&ref_1 OverrideSet{
-"children":Map{
-"foo@1" => OverrideSet{
-"children":Map{},
-"key":"foo@1",
-"keySpec":"1",
-"name":"foo",
-"parent":<*ref_1>,
-"value":"2.0.0",},
-"bar" => <*ref_2>,},
-"parent":undefined,},
-"value":"2.0.0",},
-"spec":"^1.0.0",
-"type":"prod",},},
-"location":"node_modules/bar",
-"name":"bar",
-"overrides":Map{
-"bar" => Object{
-"keySpec":"",
-"value":"2.0.0",},
-"foo@1" => Object{
-"keySpec":"1",
-"value":"2.0.0",},},
-"path":"/some/path/node_modules/bar",
-"version":"2.0.0",},
-"foo" =>{
-"edgesIn":Set{
-EdgeIn{
-"from":"",
-"name":"foo",
-"overrides":&ref_3 OverrideSet{
-"children":Map{},
-"key":"foo@1",
-"keySpec":"1",
-"name":"foo",
-"parent":&ref_1 OverrideSet{
-"children":Map{
-"foo@1" => <*ref_3>,
-"bar" => OverrideSet{
-"children":Map{},
-"key":"bar",
-"keySpec":"",
-"name":"bar",
-"parent":<*ref_1>,
-"value":"2.0.0",},},
-"parent":undefined,},
-"value":"2.0.0",},
-"spec":"^1.0.0",
-"type":"prod",},},
-"location":"node_modules/foo",
-"name":"foo",
-"overrides":Map{
-"foo@1" => Object{
-"keySpec":"1",
-"value":"2.0.0",},
-"bar" => Object{
-"keySpec":"",
-"value":"2.0.0",},},
-"path":"/some/path/node_modules/foo",
-"version":"2.0.0",},},
-"edgesOut":Map{
-"bar" => EdgeOut{
-"name":"bar",
-"overrides":&ref_2 OverrideSet{
-"children":Map{},
-"key":"bar",
-"keySpec":"",
-"name":"bar",
-"parent":&ref_1 OverrideSet{
-"children":Map{
-"foo@1" => OverrideSet{
-"children":Map{},
-"key":"foo@1",
-"keySpec":"1",
-"name":"foo",
-"parent":<*ref_1>,
-"value":"2.0.0",},
-"bar" => <*ref_2>,},
-"parent":undefined,},
-"value":"2.0.0",},
-"spec":"^1.0.0",
-"to":"node_modules/bar",
-"type":"prod",},
-"foo" => EdgeOut{
-"name":"foo",
-"overrides":&ref_3 OverrideSet{
-"children":Map{},
-"key":"foo@1",
-"keySpec":"1",
-"name":"foo",
-"parent":&ref_1 OverrideSet{
-"children":Map{
-"foo@1" => <*ref_3>,
-"bar" => OverrideSet{
-"children":Map{},
-"key":"bar",
-"keySpec":"",
-"name":"bar",
-"parent":<*ref_1>,
-"value":"2.0.0",},},
-"parent":undefined,},
-"value":"2.0.0",},
-"spec":"^1.0.0",
-"to":"node_modules/foo",
-"type":"prod",},},
-"isProjectRoot":true,
-"location":"",
-"name":"path",
-"overrides":Map{
-"foo@1" => Object{
-"keySpec":"1",
-"value":"2.0.0",},
-"bar" => Object{
-"keySpec":"",
-"value":"2.0.0",},},
-"packageName":"root",
-"path":"/some/path",
-"version":"1.0.0",}
+name:'path',
+packageName:'root',
+version:'1.0.0',
+location:'',
+path:'/some/path',
+isProjectRoot:true,
+overrides:Map{'foo@1' => '2.0.0', 'bar' => '2.0.0'},
+edgesOut:Map{
+'bar' =>{prod bar@^1.0.0 overridden:2.0.0 -> node_modules/bar},
+'foo' =>{prod foo@^1.0.0 overridden:2.0.0 -> node_modules/foo}},
+children:Map{
+'bar' =>{
+name:'bar',
+version:'2.0.0',
+location:'node_modules/bar',
+path:'/some/path/node_modules/bar',
+overrides:Map{'bar' => '2.0.0', 'foo@1' => '2.0.0'},
+edgesIn:Set{{"" prod bar@^1.0.0}}},
+'foo' =>{
+name:'foo',
+version:'2.0.0',
+location:'node_modules/foo',
+path:'/some/path/node_modules/foo',
+overrides:Map{'foo@1' => '2.0.0', 'bar' => '2.0.0'},
+edgesIn:Set{{"" prod foo@^1.0.0}}}}}
 `
 
 exports[`test/printable.js TAP show workspaces in printable node output > must match snapshot 1`] = `
