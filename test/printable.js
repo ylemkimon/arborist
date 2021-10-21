@@ -434,7 +434,6 @@ t.test('show overrides', (t) => {
     ],
     ...flags,
   })
-  console.error(printable(tree))
 
   t.matchSnapshot(printable(tree))
   t.end()

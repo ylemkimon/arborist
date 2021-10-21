@@ -37,6 +37,10 @@ t.test('constructor', async (t) => {
 
     const missingNodeRule = overrides.getNodeRule({ name: 'c', version: '1.0.0' })
     t.equal(missingNodeRule, overrides, 'getNodeRule returns root for misses')
+    const matchRule = overrides.getMatchingRule({ name: 'a', version: '1.0.2' })
+    t.equal(matchRule, overrides.children.get('a@1'), 'got a match for a@1')
+    const unmatchedRule = overrides.getMatchingRule({ name: 'a', version: '2.0.0' })
+    t.equal(unmatchedRule, null, 'got null for unmatched node')
 
     const keySpecRuleA = overrides.getNodeRule({ name: 'a', version: '1.0.1' })
     t.ok(keySpecRuleA, 'found a rule by keySpec for a@1')
@@ -78,6 +82,10 @@ t.test('constructor', async (t) => {
 
     const missingNodeRule = overrides.getNodeRule({ name: 'c', version: '1.0.0' })
     t.equal(missingNodeRule, overrides, 'getNodeRule returns root for misses')
+    const matchRule = overrides.getMatchingRule({ name: 'a', version: '1.0.2' })
+    t.equal(matchRule, overrides.children.get('a@1'), 'got a match for a@1')
+    const unmatchedRule = overrides.getMatchingRule({ name: 'a', version: '2.0.0' })
+    t.equal(unmatchedRule, null, 'got null for unmatched node')
 
     const keySpecRuleA = overrides.getNodeRule({ name: 'a', version: '1.0.1' })
     t.ok(keySpecRuleA, 'found a rule by keySpec for a@1')
