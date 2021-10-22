@@ -2851,3 +2851,86 @@ t.test('peer conflicts between peer sets in transitive deps', t => {
 
   t.end()
 })
+
+t.test('competing peerSets causes an infinite loop in workspace', async t => {
+  // The following tree caused an infinite loop in
+  // https://github.com/npm/cli/issues/3933
+  //
+  // The tree below causes pruning of competing peerSets. The tree can be
+  // resolved with an override warning, but we test inside a workspace to
+  // ensure we stop pruning at the top of the workspace, same as the root.
+  //
+  // ```
+  // project -> (a)
+  // a -> (b), PEER(c@1||2), PEER(d@1||2)
+  // b -> PEER(c@1), PEER(d@1)
+  // c -> ()
+  // d@1 -> PEER(c@1)
+  // d@2 -> PEER(c@2)
+  // ```
+
+  const dependencies = {
+    '@lukekarrys/workspace-peer-dep-infinite-loop-a': '1.0.0',
+  }
+
+  const fixt = t.testdir({
+    root: {
+      'package.json': JSON.stringify({
+        name: 'workspace-peer-dep-infinite-loop-root',
+        version: '1.0.0',
+        dependencies,
+      }),
+    },
+    ws: {
+      'package.json': JSON.stringify({
+        name: 'workspace-peer-dep-infinite-loop-ws',
+        version: '1.0.0',
+        workspaces: ['a'],
+      }),
+      a: {
+        'package.json': JSON.stringify({
+          name: 'a',
+          version: '1.0.0',
+          dependencies,
+        }),
+      },
+    },
+  })
+
+  const warnings = warningTracker()
+
+  const rootTree = await buildIdeal(resolve(fixt, 'root'))
+  const rootA = rootTree.children.get('@lukekarrys/workspace-peer-dep-infinite-loop-a')
+  const rootB = rootTree.children.get('@lukekarrys/workspace-peer-dep-infinite-loop-b')
+  const rootC = rootTree.children.get('@lukekarrys/workspace-peer-dep-infinite-loop-c')
+  const rootD = rootTree.children.get('@lukekarrys/workspace-peer-dep-infinite-loop-d')
+
+  const wsTree = await buildIdeal(resolve(fixt, 'ws'))
+  const wsA = wsTree.children.get('@lukekarrys/workspace-peer-dep-infinite-loop-a')
+  const wsB = wsTree.children.get('@lukekarrys/workspace-peer-dep-infinite-loop-b')
+  const wsC = wsTree.children.get('@lukekarrys/workspace-peer-dep-infinite-loop-c')
+  const wsD = wsTree.children.get('@lukekarrys/workspace-peer-dep-infinite-loop-d')
+
+  t.equal(rootA.version, '1.0.0')
+  t.equal(rootB.version, '1.0.0')
+  t.equal(rootC.version, '1.0.0')
+  t.equal(rootD.version, '1.0.0')
+  t.equal(wsA.version, '1.0.0')
+  t.equal(wsB.version, '1.0.0')
+  t.equal(wsC.version, '1.0.0')
+  t.equal(wsD.version, '1.0.0')
+
+  const [rootWarnings, wsWarnings] = warnings()
+
+  t.match(rootWarnings, ['warn', 'ERESOLVE', 'overriding peer dependency', {
+    code: 'ERESOLVE',
+  }], 'root warning is an override ERESOLVE')
+  t.match(wsWarnings, ['warn', 'ERESOLVE', 'overriding peer dependency', {
+    code: 'ERESOLVE',
+  }], 'workspace warning is an override ERESOLVE')
+
+  t.matchSnapshot(normalizePaths(rootWarnings[3]), 'root ERESOLVE explanation')
+  t.matchSnapshot(normalizePaths(wsWarnings[3]), 'workspace ERESOLVE explanation')
+  t.matchSnapshot(printTree(rootTree), 'root tree')
+  t.matchSnapshot(printTree(wsTree), 'workspace tree')
+})
