@@ -2856,14 +2856,20 @@ t.test('competing peerSets causes an infinite loop in workspace', async t => {
   // The following tree caused an infinite loop in
   // https://github.com/npm/cli/issues/3933
   //
-  // The tree below causes pruning of competing peerSets. The tree can be
-  // resolved with an override warning, but we test inside a workspace to
-  // ensure we stop pruning at the top of the workspace, same as the root.
   //
   // ```
-  // project -> (a)
-  // a -> (b), PEER(c@1||2), PEER(d@1||2)
-  // b -> PEER(c@1), PEER(d@1)
+  // project -> (a@1)
+  // a@1 -> (b@1), PEER(c@1||2), PEER(d@1||2)
+  // b@1 -> PEER(c@1), PEER(d@1)
+  // c -> ()
+  // d@1 -> PEER(c@1)
+  // d@2 -> PEER(c@2)
+  // ```
+  //
+  // ```
+  // project -> (a@2)
+  // a@2 -> (b@2), PEER(c@2), PEER(d@2)
+  // b@2 -> PEER(c@1), PEER(d@1)
   // c -> ()
   // d@1 -> PEER(c@1)
   // d@2 -> PEER(c@2)
@@ -2920,17 +2926,8 @@ t.test('competing peerSets causes an infinite loop in workspace', async t => {
   t.equal(wsC.version, '1.0.0')
   t.equal(wsD.version, '1.0.0')
 
-  const [rootWarnings, wsWarnings] = warnings()
+  t.match(warnings(), [], 'no warnings')
 
-  t.match(rootWarnings, ['warn', 'ERESOLVE', 'overriding peer dependency', {
-    code: 'ERESOLVE',
-  }], 'root warning is an override ERESOLVE')
-  t.match(wsWarnings, ['warn', 'ERESOLVE', 'overriding peer dependency', {
-    code: 'ERESOLVE',
-  }], 'workspace warning is an override ERESOLVE')
-
-  t.matchSnapshot(normalizePaths(rootWarnings[3]), 'root ERESOLVE explanation')
-  t.matchSnapshot(normalizePaths(wsWarnings[3]), 'workspace ERESOLVE explanation')
   t.matchSnapshot(printTree(rootTree), 'root tree')
   t.matchSnapshot(printTree(wsTree), 'workspace tree')
 })
